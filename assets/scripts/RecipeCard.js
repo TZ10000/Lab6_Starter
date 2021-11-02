@@ -1,8 +1,10 @@
 class RecipeCard extends HTMLElement {
   constructor() {
-    // Part 1 Expose - TODO
-
+    // Part 1 Expose
+    super();
+    
     // You'll want to attach the shadow DOM here
+    this.attachShadow({ mode: "open" });
   }
 
   set data(data) {
@@ -100,6 +102,91 @@ class RecipeCard extends HTMLElement {
     // created in the constructor()
 
     // Part 1 Expose - TODO
+
+    const image = document.createElement('img');
+    const thumbnailUrl = searchForKey(data,'thumbnailUrl');
+    const headline = searchForKey(data,'headline');
+    image.src = thumbnailUrl;
+    image.alt = headline;
+    card.appendChild(image);
+
+    // Title
+    const title = document.createElement('p');
+    title.className = 'title';
+    let url = getUrl(data);
+    const a = document.createElement('a')
+    a.href = url;
+    a.textContent = headline;
+    title.append(a);
+    card.appendChild(title);
+
+    // organization
+    const orgnizaiton = document.createElement('p');
+    orgnizaiton.className = 'orgnization';
+    orgnizaiton.textContent = getOrganization(data);
+    card.appendChild(orgnizaiton);
+
+    // rating
+    const div = document.createElement('div');
+    div.className = 'rating';
+
+    const span1 = document.createElement('span');
+    const rating = searchForKey(data, 'ratingValue');
+    const roundedRating = Math.round(rating);
+
+    if (rating > 0) {
+      span1.textContent = rating;
+      div.appendChild(span1);
+
+      const image2 = document.createElement('img');
+      switch(roundedRating) {
+        case 1:
+          image2.src = 'assets/images/icons/1-star.svg';
+          image2.alt = '1 stars';
+          break;
+        case 2:
+          image2.src = 'assets/images/icons/2-star.svg';
+          image2.alt = '2 stars';
+          break;
+        case 3:
+          image2.src = 'assets/images/icons/3-star.svg';
+          image2.alt = '3 stars';
+          break;
+        case 4:
+          image2.src = 'assets/images/icons/4-star.svg';
+          image2.alt = '4 stars';
+          break;
+        case 5:
+          image2.src = 'assets/images/icons/5-star.svg';
+          image2.alt = '5 stars';
+          break;
+      }
+      div.appendChild(image2);
+
+      const span2 = document.createElement('span');
+      const ratingCount = searchForKey(data, 'ratingCount');
+      span2.textContent = '(' + ratingCount + ')';
+      div.appendChild(span2);
+    } else {
+      span1.textContent = 'No Reviews';
+      div.appendChild(span1);
+    }
+    
+    card.appendChild(div);
+
+    // time
+    const time = document.createElement('time');
+    time.textContent = convertTime(searchForKey(data,'totalTime'));
+    card.appendChild(time);
+
+    // ingredient
+    const ingredient = document.createElement('p');
+    ingredient.className = 'ingredient';
+    ingredient.textContent = createIngredientList(searchForKey(data, 'recipeIngredient'));
+    card.appendChild(ingredient);
+
+    this.shadowRoot.append(card);
+    this.shadowRoot.append(styleElem);
   }
 }
 
